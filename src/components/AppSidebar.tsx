@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Package, ShoppingCart, Users, Bell, Settings, TrendingUp } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Users, Bell, Settings, TrendingUp, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/" },
