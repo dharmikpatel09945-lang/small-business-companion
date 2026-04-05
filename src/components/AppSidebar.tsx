@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Package, ShoppingCart, Users, Bell, Settings, TrendingUp } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Users, Bell, Settings, TrendingUp, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/" },
@@ -12,6 +13,7 @@ const navItems = [
 
 const AppSidebar = () => {
   const location = useLocation();
+  const { signOut } = useAuth();
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-sidebar flex flex-col z-50">
@@ -43,14 +45,21 @@ const AppSidebar = () => {
         })}
       </nav>
 
-      <div className="p-3 border-t border-sidebar-border">
+      <div className="p-3 border-t border-sidebar-border space-y-1">
         <Link
           to="/settings"
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
         >
-          <Settings className="h-4.5 w-4.5" />
+          <Settings className="h-4 w-4" />
           Settings
         </Link>
+        <button
+          onClick={signOut}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+        >
+          <LogOut className="h-4 w-4" />
+          Sign Out
+        </button>
       </div>
     </aside>
   );
