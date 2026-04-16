@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Package, Search, Plus, Filter } from "lucide-react";
-import { products, Product } from "@/data/mockData";
+import { Package, Search, Filter } from "lucide-react";
+import { Product } from "@/data/mockData";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useProducts } from "@/hooks/useProducts";
+import { AddProductDialog } from "@/components/AddProductDialog";
 
 const statusStyles: Record<Product["status"], string> = {
   in_stock: "bg-success/10 text-success border-success/20",
@@ -20,6 +21,7 @@ const statusLabels: Record<Product["status"], string> = {
 const Inventory = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | Product["status"]>("all");
+  const { products, addProduct } = useProducts();
 
   const filtered = products.filter((p) => {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.toLowerCase().includes(search.toLowerCase());
@@ -34,10 +36,7 @@ const Inventory = () => {
           <h1 className="text-2xl font-bold text-foreground">Inventory</h1>
           <p className="text-muted-foreground mt-1">Manage your products and stock levels.</p>
         </div>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Add Product
-        </Button>
+        <AddProductDialog onAddProduct={addProduct} />
       </div>
 
       <div className="flex gap-3 items-center">
@@ -85,7 +84,7 @@ const Inventory = () => {
                 </td>
                 <td className="p-4 text-sm text-muted-foreground font-mono">{product.sku}</td>
                 <td className="p-4 text-sm text-muted-foreground">{product.category}</td>
-                <td className="p-4 text-sm font-medium text-card-foreground text-right">${product.price.toFixed(2)}</td>
+                <td className="p-4 text-sm font-medium text-card-foreground text-right">₹{product.price.toFixed(2)}</td>
                 <td className="p-4 text-sm font-medium text-card-foreground text-right">{product.stock}</td>
                 <td className="p-4">
                   <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusStyles[product.status]}`}>

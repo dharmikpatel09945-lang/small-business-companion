@@ -34,7 +34,7 @@ const Customers = () => {
         </div>
         <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-muted-foreground">Avg. Lifetime Value</p>
-          <p className="text-xl font-bold text-card-foreground mt-1">${(customers.reduce((s, c) => s + c.totalSpent, 0) / customers.length).toFixed(2)}</p>
+          <p className="text-xl font-bold text-card-foreground mt-1">₹{(customers.reduce((s, c) => s + c.totalSpent, 0) / customers.length).toFixed(2)}</p>
         </div>
       </div>
 
@@ -60,7 +60,7 @@ const Customers = () => {
                     </span>
                   </div>
                 </div>
-                <p className="text-lg font-bold text-card-foreground">${customer.totalSpent.toFixed(2)}</p>
+                <p className="text-lg font-bold text-card-foreground">₹{customer.totalSpent.toFixed(2)}</p>
               </div>
               <div className="grid grid-cols-3 gap-3 text-xs">
                 <div>
@@ -73,7 +73,7 @@ const Customers = () => {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Avg/Visit</p>
-                  <p className="font-semibold text-card-foreground">${(customer.totalSpent / customer.visits).toFixed(2)}</p>
+                  <p className="font-semibold text-card-foreground">₹{(customer.totalSpent / customer.visits).toFixed(2)}</p>
                 </div>
               </div>
               <div className="flex gap-4 mt-3 pt-3 border-t border-border">

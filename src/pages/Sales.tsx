@@ -1,17 +1,29 @@
-import { ShoppingCart, Search, Plus, CreditCard, Banknote } from "lucide-react";
-import { sales } from "@/data/mockData";
+import { ShoppingCart, Search, CreditCard, Banknote } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useSales } from "@/hooks/useSales";
+import { useProducts } from "@/hooks/useProducts";
+import { AddSaleDialog } from "@/components/AddSaleDialog";
+import { Sale } from "@/data/mockData";
 
 const Sales = () => {
   const [search, setSearch] = useState("");
+  const { sales, addSale } = useSales();
+  const { products, updateProductStock } = useProducts();
+
+  const handleAddSale = async (saleData: Omit<Sale, "id" | "date">, productId: string) => {
+    await addSale(saleData);
+    await updateProductStock(productId, saleData.items[0].quantity);
+  };
+
+  const todayStr = new Date().toISOString().split("T")[0];
+  const displaySalesDate = sales.some(s => s.date === todayStr) ? todayStr : "2026-04-05";
 
   const filtered = sales.filter((s) =>
     s.customer.toLowerCase().includes(search.toLowerCase()) || s.id.toLowerCase().includes(search.toLowerCase())
   );
 
-  const todayTotal = sales.filter((s) => s.date === "2026-04-05").reduce((sum, s) => sum + s.total, 0);
+  const todayTotal = sales.filter((s) => s.date === displaySalesDate).reduce((sum, s) => sum + s.total, 0);
 
   return (
     <div className="space-y-6">
@@ -20,24 +32,21 @@ const Sales = () => {
           <h1 className="text-2xl font-bold text-foreground">Sales</h1>
           <p className="text-muted-foreground mt-1">Track and record all your transactions.</p>
         </div>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Sale
-        </Button>
+        <AddSaleDialog products={products} onAddSale={handleAddSale} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-muted-foreground">Today's Sales</p>
-          <p className="text-xl font-bold text-card-foreground mt-1">${todayTotal.toFixed(2)}</p>
+          <p className="text-xl font-bold text-card-foreground mt-1">₹{todayTotal.toFixed(2)}</p>
         </div>
         <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-muted-foreground">Transactions Today</p>
-          <p className="text-xl font-bold text-card-foreground mt-1">{sales.filter((s) => s.date === "2026-04-05").length}</p>
+          <p className="text-xl font-bold text-card-foreground mt-1">{sales.filter((s) => s.date === displaySalesDate).length}</p>
         </div>
         <div className="glass-card rounded-xl p-5">
           <p className="text-sm text-muted-foreground">Avg. Order Value</p>
-          <p className="text-xl font-bold text-card-foreground mt-1">${(sales.reduce((s, a) => s + a.total, 0) / sales.length).toFixed(2)}</p>
+          <p className="text-xl font-bold text-card-foreground mt-1">₹{sales.length > 0 ? (sales.reduce((s, a) => s + a.total, 0) / sales.length).toFixed(2) : "0.00"}</p>
         </div>
       </div>
 
@@ -65,7 +74,7 @@ const Sales = () => {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-base font-bold text-card-foreground">${sale.total.toFixed(2)}</p>
+                <p className="text-base font-bold text-card-foreground">₹{sale.total.toFixed(2)}</p>
                 <div className="flex items-center gap-1 mt-1 justify-end">
                   {sale.paymentMethod === "Cash" ? <Banknote className="h-3 w-3 text-muted-foreground" /> : <CreditCard className="h-3 w-3 text-muted-foreground" />}
                   <span className="text-xs text-muted-foreground">{sale.paymentMethod}</span>

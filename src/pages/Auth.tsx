@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Package, Mail, Lock, User, Building2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,39 +15,34 @@ const Auth = () => {
   const [displayName, setDisplayName] = useState("");
   const [businessName, setBusinessName] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { setAuth } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { display_name: displayName },
-            emailRedirectTo: window.location.origin,
-          },
-        });
-        if (error) throw error;
+      const endpoint = isLogin ? "/api/auth/login" : "/api/auth/signup";
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, displayName, businessName })
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Authentication failed");
 
-        // Update business name in profile after signup
-        if (businessName) {
-          // Profile is auto-created by trigger, we'll update it after login
-        }
+      setAuth(data.user, data.token);
 
-        toast({
-          title: "Account created!",
-          description: "Check your email for verification, or sign in if auto-confirm is enabled.",
-        });
-      }
+      toast({
+        title: isLogin ? "Welcome back!" : "Account created!",
+        description: isLogin ? "You have been successfully signed in." : "Your account has been successfully created and you are now logged in.",
+      });
+      navigate("/");
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: "Authentication Error",
         description: error.message,
         variant: "destructive",
       });
@@ -144,8 +140,9 @@ const Auth = () => {
 
           <div className="mt-6 text-center">
             <button
+              type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-primary hover:underline"
+              className="text-sm text-primary hover:underline hover:text-primary/90 transition-colors"
             >
               {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
             </button>

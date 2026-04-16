@@ -1,4 +1,4 @@
-import { DollarSign, Package, ShoppingCart, Users, TrendingUp, AlertTriangle } from "lucide-react";
+import { IndianRupee, Package, ShoppingCart, Users, TrendingUp, AlertTriangle } from "lucide-react";
 import StatCard from "@/components/StatCard";
 import { products, sales, customers, revenueData, categoryData } from "@/data/mockData";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
@@ -23,7 +23,7 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <StatCard title="Total Revenue" value={`$${totalRevenue.toFixed(2)}`} change="+12.5% from last month" changeType="positive" icon={DollarSign} />
+        <StatCard title="Total Revenue" value={`₹${totalRevenue.toFixed(2)}`} change="+12.5% from last month" changeType="positive" icon={IndianRupee} />
         <StatCard title="Products" value={products.length.toString()} change={`${lowStockItems.length} need attention`} changeType="negative" icon={Package} />
         <StatCard title="Sales Today" value={sales.filter((s) => s.date === "2026-04-05").length.toString()} change="+3 from yesterday" changeType="positive" icon={ShoppingCart} />
         <StatCard title="Customers" value={customers.length.toString()} change="+2 new this week" changeType="positive" icon={Users} />
@@ -107,7 +107,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-card-foreground">${sale.total.toFixed(2)}</p>
+                <p className="text-sm font-semibold text-card-foreground">₹{sale.total.toFixed(2)}</p>
                 <p className="text-xs text-muted-foreground">{sale.date}</p>
               </div>
             </div>

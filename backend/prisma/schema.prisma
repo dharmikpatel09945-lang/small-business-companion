@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  password     String
+  displayName  String?
+  businessName String?
+  createdAt    DateTime   @default(now())
+  
+  products     Product[]
+  sales        Sale[]
+  customers    Customer[]
+}
+
+model Product {
+  id        String   @id @default(uuid())
+  name      String
+  category  String
+  sku       String
+  price     Float
+  cost      Float
+  stock     Int
+  minStock  Int
+  status    String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Sale {
+  id            String     @id @default(uuid())
+  date          String
+  customerName  String
+  total         Float
+  paymentMethod String
+  userId        String
+  user          User       @relation(fields: [userId], references: [id])
+  items         SaleItem[]
+}
+
+model SaleItem {
+  id        String  @id @default(uuid())
+  sale      Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  saleId    String
+  product   String
+  quantity  Int
+  price     Float
+}
+
+model Customer {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @default("")
+  phone      String   @default("")
+  totalSpent Float    @default(0)
+  visits     Int      @default(0)
+  lastVisit  String   @default("")
+  tier       String   @default("bronze")
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+}
