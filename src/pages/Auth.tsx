@@ -41,9 +41,14 @@ const Auth = () => {
       });
       navigate("/");
     } catch (error: any) {
+      let errorMessage = error.message;
+      if (errorMessage.includes("Unexpected token 'T'") && errorMessage.includes("The page c")) {
+        errorMessage = "You are trying to log in on the live Vercel deployment, but your SQLite database only runs securely on your local computer. Please open http://localhost:8080 or http://localhost:3000 to use your app.";
+      }
+
       toast({
         title: "Authentication Error",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
