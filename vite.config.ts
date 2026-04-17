@@ -9,11 +9,15 @@ const backendStarter = () => ({
   name: "backend-starter",
   configureServer() {
     console.log("Starting backend server alongside Vite...");
-    const backend = spawn("bun", ["run", "backend/index.ts"], {
-      stdio: "inherit",
-      shell: true,
+    const backend = spawn(process.execPath, ["run", "backend/index.ts"], {
+      stdio: "pipe",
+      shell: false,
     });
-    backend.on("error", (err) => console.error("Backend failed:", err));
+    
+    backend.stdout?.on('data', (data) => console.log(`[Backend] ${data.toString()}`));
+    backend.stderr?.on('data', (data) => console.error(`[Backend ERROR] ${data.toString()}`));
+    backend.on("error", (err) => console.error("[Backend FATAL]:", err));
+    backend.on("exit", (code) => console.log(`[Backend] Process exited with code ${code}`));
     
     // Kill backend if Vite stops
     process.on("exit", () => backend.kill());
