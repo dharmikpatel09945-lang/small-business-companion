@@ -8,8 +8,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+if (!process.env.DATABASE_URL) {
+  console.warn('⚠️  WARNING: DATABASE_URL is not set. Using local SQLite for dev.');
+}
+
 const prisma = new PrismaClient();
-const JWT_SECRET = 'supersecret_biztrack_key_for_local_dev';
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecret_biztrack_key_for_local_dev';
 
 // Auth Middleware
 const authenticateToken = (req: any, res: any, next: any) => {
