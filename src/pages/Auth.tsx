@@ -30,8 +30,14 @@ const Auth = () => {
         body: JSON.stringify({ email, password, displayName, businessName })
       });
       
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Authentication failed");
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        throw new Error("Unable to reach the backend server. Please verify the server is running offline.");
+      }
+      
+      if (!res.ok) throw new Error(data?.error || "Authentication failed");
 
       setAuth(data.user, data.token);
 

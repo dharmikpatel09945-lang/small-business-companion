@@ -3,6 +3,23 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
+import { spawn } from "child_process";
+
+const backendStarter = () => ({
+  name: "backend-starter",
+  configureServer() {
+    console.log("Starting backend server alongside Vite...");
+    const backend = spawn("bun", ["run", "backend/index.ts"], {
+      stdio: "inherit",
+      shell: true,
+    });
+    backend.on("error", (err) => console.error("Backend failed:", err));
+    
+    // Kill backend if Vite stops
+    process.on("exit", () => backend.kill());
+  },
+});
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -16,9 +33,19 @@ export default defineConfig(({ mode }) => ({
         target: "http://localhost:3001",
         changeOrigin: true,
       },
+      "/api/auth/me": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+        timeout: 5000,
+        proxyTimeout: 5000,
+      }
     },
   },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [
+    react(), 
+    mode === "development" && componentTagger(),
+    mode === "development" && backendStarter()
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
