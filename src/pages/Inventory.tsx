@@ -33,7 +33,7 @@ const Inventory = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Inventory</h1>
+          <h1 className="text-2xl font-bold text-foreground">Product List</h1>
           <p className="text-muted-foreground mt-1">Manage your products and stock levels.</p>
         </div>
         <AddProductDialog onAddProduct={addProduct} />
