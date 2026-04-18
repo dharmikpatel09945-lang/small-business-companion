@@ -159,11 +159,9 @@ app.get('/api/customers', authenticateToken, async (req: any, res: any) => {
   }
 });
 
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-  const PORT = 3001;
-  app.listen(PORT, () => {
-    console.log(`Backend server running on http://localhost:${PORT}`);
-  });
-}
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Backend server running on port ${PORT}`);
+});
 
 export default app;
